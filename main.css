@@ -1,0 +1,126 @@
+label {
+    display: block
+}
+
+input#title {
+    width: 40em
+}
+
+textarea {
+    height: 10em;
+    width: 55em
+}
+
+body {
+    text-align: center;
+    background: #222
+}
+
+fieldset {
+    margin-top: 10px
+}
+
+#wrapper {
+    width: 800px;
+    margin: 10px auto;
+    text-align: left;
+    border: 1px solid grey;
+    padding: 20px;
+    background: #eee
+}
+
+div.blog_post h2 a,div#header h1 a {
+    text-decoration: none;
+    color: #000
+}
+
+div#header h1 {
+    margin-top: 0;
+    font-size: 2.5em
+}
+
+div.blog_post h2 {
+    margin-bottom: 0
+}
+
+div.blog_post p {
+    margin-top: 0
+}
+
+div.blog_post div.blog_content p {
+    margin-top: .5em
+}
+
+#menu li {
+    display: inline
+}
+
+#menu li a {
+    border: 1px solid grey;
+    padding: 5px 10px
+}
+
+#menu {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 4px
+}
+
+#menu li a.active {
+    border: 2px solid grey;
+    background: #999;
+    color: #000;
+    text-decoration: none;
+    font-weight: 700
+}
+
+#menu li a:hover {
+    background: #aaa;
+    color: #000
+}
+
+div#all_blogs {
+    border: 2px solid grey;
+    padding: 0 10px 10px
+}
+
+h1,h2 {
+    font-family: Cambria,times,serif
+}
+
+div.blog_content {
+    font-family: Calibri,sans-serif
+}
+
+div#footer {
+    text-align: right;
+    margin-top: 10px
+}
+
+#ulist li {
+    display: inline
+}
+
+#ulist li a {
+    border: 1px solid grey;
+    padding: 5px 10px
+}
+
+#ulist {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 4px
+}
+
+#ulist li a {
+    border: 2px solid grey;
+    background: #999;
+    color: #000;
+    text-decoration: none;
+    font-weight: 700
+}
+
+#ulist li a:hover {
+    background: #aaa;
+    color: #000
+}
