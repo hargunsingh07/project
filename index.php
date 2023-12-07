@@ -7,7 +7,9 @@
 
 require('connect.php');
 
-$query = "SELECT * FROM vehicles ORDER BY year DESC LIMIT 5"; // Assuming your table is named 'vehicles'
+session_start();
+
+$query = "SELECT * FROM vehicles "; // Assuming your table is named 'vehicles'
 $statement = $db->prepare($query);
 $statement->execute();
 ?>
@@ -28,9 +30,14 @@ $statement->execute();
         </div> 
         <ul id="menu">
             <li><a href="index.php" class="active">Home</a></li>
-            <li><a href="add.php">New Car</a></li>
-            <!-- Add a link to the admin dashboard -->
-            <li><a href="admin.php">Admin Dashboard</a></li>
+            <?php if (isset($_SESSION['user_id'])) : ?>
+                <!-- Display Logout button when a user is logged in -->
+                <li style="float:right"><a href="logout.php">Logout</a></li>
+            <?php else : ?>
+                <!-- Display Login button when no user is logged in -->
+                <li style="float:right"><a href="login.php">Login</a></li>
+            <?php endif; ?>
+
         </ul> 
         <div id="body">
         <h2>Recently Added Cars</h2>
@@ -45,11 +52,6 @@ $statement->execute();
                 <li>Mileage: <?= $row['mileage'] ?> miles</li>
                 <li>Price: $<?= $row['price'] ?></li>
                 <li>Description: <?= $row['description'] ?></li>
-                <!-- Display the image -->
-                
-
-                <!-- Add/Edit/View links as appropriate for your application -->
-                <li><a href="edit.php?vehicle_id=<?= $row['vehicle_id']; ?>">Edit</a></li><br>
             <?php endwhile ?>
         </ul>
     </div>
@@ -59,6 +61,10 @@ $statement->execute();
 </div> 
 </body>
 </html>
+
+
+
+
 
 
 
