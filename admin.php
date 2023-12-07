@@ -8,8 +8,18 @@
 require('connect.php');
 require('authenticate.php');
 
-// Fetch all cars from the database
-$query = "SELECT * FROM vehicles";
+// Default sorting option
+$sort_option = isset($_GET['sort']) ? $_GET['sort'] : 'price';
+
+// Validate the sort option to prevent SQL injection
+$allowed_sort_options = ['price', 'mileage', 'year'];
+if (!in_array($sort_option, $allowed_sort_options)) {
+    // Invalid sort option, set a default
+    $sort_option = 'price';
+}
+
+// Fetch all cars from the database with the selected sorting option
+$query = "SELECT * FROM vehicles ORDER BY $sort_option";
 $statement = $db->prepare($query);
 $statement->execute();
 $cars = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -31,10 +41,22 @@ $cars = $statement->fetchAll(PDO::FETCH_ASSOC);
         </div> 
         <ul id="menu">
             <li><a href="index.php">Home</a></li>
-            <!-- Add more links as needed -->
+            <li><a href="add.php">Add Car</a></li>
         </ul> 
+        
         <div id="content">
             <h2>Admin Dashboard - View Cars</h2>
+            <div id="sorting-options">
+            <form method="get" action="admin.php">
+                <label for="sort">Sort by:</label>
+                <select id="sort" name="sort">
+                    <option value="price" <?php echo ($sort_option === 'price') ? 'selected' : ''; ?>>Price</option>
+                    <option value="mileage" <?php echo ($sort_option === 'mileage') ? 'selected' : ''; ?>>Mileage</option>
+                    <option value="year" <?php echo ($sort_option === 'year') ? 'selected' : ''; ?>>Year</option>
+                </select>
+                <button type="submit">Sort</button>
+            </form>
+        </div>
             <table>
                 <thead>
                     <tr>
@@ -53,7 +75,7 @@ $cars = $statement->fetchAll(PDO::FETCH_ASSOC);
                     <?php foreach ($cars as $car): ?>
                         <tr>
                             <td><?= $car['make'] ?></td>
-                            <td><?= $car['model'] ?></td>
+                            <td><a href="view.php?vehicle_id=<?= $car['vehicle_id']; ?>"><?= $car['model'] ?></a></td>
                             <td><?= $car['year'] ?></td>
                             <td><?= $car['car_condition'] ?></td>
                             <td><?= $car['mileage'] ?></td>
@@ -76,3 +98,4 @@ $cars = $statement->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </body>
 </html>
+
