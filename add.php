@@ -1,7 +1,7 @@
 <?php
 /************
     Name: Hargun Singh
-    Date:
+    Date: 
     Description: Car Dealership - Add Car
 ************/
 
@@ -76,6 +76,10 @@ if ($_POST && !empty($_POST['make']) && !empty($_POST['model']) && !empty($_POST
     // Execute the INSERT.
     if ($statement->execute()) {
         echo "Success";
+    
+        // Redirect to admin.php after successful addition
+        header("Location: admin.php");
+        exit; // Ensure that no further output is sent
     } else {
         echo "Error inserting data into the database.";
     }
@@ -131,3 +135,4 @@ if ($_POST && !empty($_POST['make']) && !empty($_POST['model']) && !empty($_POST
     </div>
 </body>
 </html>
+
