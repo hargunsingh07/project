@@ -39,6 +39,11 @@ body {
 
 #menu li {
     float: left;
+    list-style: none; 
+}
+
+#ulist {
+    list-style: none; 
 }
 
 #menu a {
@@ -121,10 +126,4 @@ th {
 
 #sorting-options button {
     margin-left: 5px;
-}
-
-
-#ulist li a:hover {
-    background: #aaa;
-    color: #000
 }
