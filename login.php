@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $statement->execute();
     $user = $statement->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && $entered_password === $user['password']) {
+    if ($user && password_verify($entered_password, $user['password'])) {
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['is_admin'] = ($user['role'] === 'admin');
 
@@ -84,3 +84,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 </html>
+
