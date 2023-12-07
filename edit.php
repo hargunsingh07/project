@@ -37,7 +37,30 @@ if ($_POST && isset($_POST['make']) && isset($_POST['model']) && isset($_POST['y
     $price = filter_input(INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $vehicle_id = filter_input(INPUT_POST, 'vehicle_id', FILTER_SANITIZE_NUMBER_INT);
-    
+
+    // Check if the "delete_image" checkbox is checked
+    $delete_image = isset($_POST['delete_image']) && $_POST['delete_image'] == 'on';
+
+    // Delete the existing image if the checkbox is checked
+    if ($delete_image) {
+        $query_delete_image = "SELECT image FROM vehicles WHERE vehicle_id = :vehicle_id";
+        $statement_delete_image = $db->prepare($query_delete_image);
+        $statement_delete_image->bindValue(':vehicle_id', $vehicle_id, PDO::PARAM_INT);
+        $statement_delete_image->execute();
+        $existing_image = $statement_delete_image->fetchColumn();
+
+        if ($existing_image) {
+            // Delete image from file system
+            unlink($existing_image);
+
+            // Remove image path from the database
+            $query_remove_image = "UPDATE vehicles SET image = NULL WHERE vehicle_id = :vehicle_id";
+            $statement_remove_image = $db->prepare($query_remove_image);
+            $statement_remove_image->bindValue(':vehicle_id', $vehicle_id, PDO::PARAM_INT);
+            $statement_remove_image->execute();
+        }
+    }
+
     // Check if an image was uploaded
     if (isset($_FILES['uploaded_image']) && $_FILES['uploaded_image']['error'] === 0) {
         $image_filename = $_FILES['uploaded_image']['name'];
@@ -76,29 +99,28 @@ if ($_POST && isset($_POST['make']) && isset($_POST['model']) && isset($_POST['y
     $statement->bindValue(':price', $price);
     $statement->bindValue(':description', $description);
     $statement->bindValue(':vehicle_id', $vehicle_id, PDO::PARAM_INT);
-    
+
     // Execute the UPDATE.
     $statement->execute();
-    
+
     // Redirect after update.
     header("Location: index.php");
     exit;
 } elseif (isset($_GET['vehicle_id'])) { // Retrieve car to be edited, if vehicle_id GET parameter is in URL.
     // Sanitize the vehicle_id. Like above but this time from INPUT_GET.
     $vehicle_id = filter_input(INPUT_GET, 'vehicle_id', FILTER_SANITIZE_NUMBER_INT);
-    
+
     // Build the parametrized SQL query using the filtered vehicle_id.
     $query = "SELECT * FROM vehicles WHERE vehicle_id = :vehicle_id";
     $statement = $db->prepare($query);
     $statement->bindValue(':vehicle_id', $vehicle_id, PDO::PARAM_INT);
-    
+
     // Execute the SELECT and fetch the single row returned.
     $statement->execute();
     $car = $statement->fetch();
 } else {
     $vehicle_id = false; // False if we are not UPDATING or SELECTING.
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -114,16 +136,16 @@ if ($_POST && isset($_POST['make']) && isset($_POST['model']) && isset($_POST['y
     <div id="wrapper">
         <div id="header">
             <h1><a href="index.php">Panjab Motors</a></h1>
-        </div> 
+        </div>
         <ul id="menu">
             <li><a href="index.php">Home</a></li>
             <li><a href="add.php">Add Car</a></li>
-        </ul> 
+        </ul>
         <?php if ($vehicle_id): ?>
             <form method="post" enctype="multipart/form-data">
                 <!-- Hidden input for the car primary key. -->
                 <input type="hidden" name="vehicle_id" value="<?= $car['vehicle_id'] ?>">
-                
+
                 <!-- Car details are echoed into the input value attributes. -->
                 <label for="make">Make</label>
                 <input id="make" name="make" value="<?= $car['make'] ?>" required>
@@ -148,12 +170,13 @@ if ($_POST && isset($_POST['make']) && isset($_POST['model']) && isset($_POST['y
 
                 <label for="uploaded_image">Upload New Image:</label>
                 <input type="file" id="uploaded_image" name="uploaded_image" accept="image/jpeg, image/png, image/gif">
-                
+
+                <label for="delete_image">Delete Existing Image:</label>
+                <input type="checkbox" id="delete_image" name="delete_image">
+
                 <input type="submit" name="command" value="Update" />
-               
             </form>
         <?php endif ?>
     </div>
 </body>
 </html>
-
